@@ -11,7 +11,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { db } from '../../firebaseConfig';
 import { MarkerData } from '../../types/marker';
 
-const libraries: Libraries = ['places'];
 const mapContainerStyle = {
   marginTop: 20,
   width: '80vw',
@@ -50,20 +49,6 @@ export const HomePage = () => {
     });
   }, []);
 
-  const onMapClick = useCallback(
-    (event: google.maps.MapMouseEvent) => {
-      const newMarker = {
-        id: markers.length + 1,
-        lat: event.latLng!.lat(),
-        lng: event.latLng!.lng(),
-        label: `${markers.length + 1}`,
-      };
-      setMarkers((current) => [...current, newMarker]);
-      saveMarkerToFirebase(newMarker);
-    },
-    [markers]
-  );
-
   const saveMarkerToFirebase = (marker: MarkerData) => {
     const newQuestRef = ref(db, `quests/Quest ${marker.id}`);
     set(newQuestRef, {
@@ -75,6 +60,20 @@ export const HomePage = () => {
       next: marker.id === markers.length + 1 ? `Quest ${marker.id + 1}` : '',
     });
   };
+
+  const onMapClick = useCallback(
+    (event: google.maps.MapMouseEvent) => {
+      const newMarker = {
+        id: markers.length + 1,
+        lat: event.latLng!.lat(),
+        lng: event.latLng!.lng(),
+        label: `${markers.length + 1}`,
+      };
+      setMarkers((current) => [...current, newMarker]);
+      saveMarkerToFirebase(newMarker);
+    },
+    [markers, saveMarkerToFirebase]
+  );
 
   const onMarkerClick = (marker: MarkerData) => {
     setSelected(marker);
