@@ -10,7 +10,7 @@ import { onValue, ref, remove, set } from 'firebase/database';
 import { useCallback, useEffect, useState } from 'react';
 import { db } from '../../firebaseConfig';
 import { MarkerData } from '../../types/marker';
-
+const libraries: Libraries = ['places'];
 const mapContainerStyle = {
   marginTop: 20,
   width: '80vw',
