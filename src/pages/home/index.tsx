@@ -21,8 +21,7 @@ const center = {
   lng: 24.0187099,
 };
 
-const staticLibraries = ['places'] as Libraries; // Avoid recreation of libraries array
-
+const staticLibraries = ['places'] as Libraries;
 export const HomePage = () => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: 'AIzaSyBbPgt5B3BfouJCrwT_80fVlPr0jnoKz2Y',
@@ -49,17 +48,20 @@ export const HomePage = () => {
     });
   }, []);
 
-  const saveMarkerToFirebase = (marker: MarkerData) => {
-    const newQuestRef = ref(db, `quests/Quest ${marker.id}`);
-    set(newQuestRef, {
-      location: {
-        lat: marker.lat,
-        lng: marker.lng,
-      },
-      timestamp: new Date().toISOString(),
-      next: marker.id === markers.length + 1 ? `Quest ${marker.id + 1}` : '',
-    });
-  };
+  const saveMarkerToFirebase = useCallback(
+    (marker: MarkerData) => {
+      const newQuestRef = ref(db, `quests/Quest ${marker.id}`);
+      set(newQuestRef, {
+        location: {
+          lat: marker.lat,
+          lng: marker.lng,
+        },
+        timestamp: new Date().toISOString(),
+        next: marker.id === markers.length + 1 ? `Quest ${marker.id + 1}` : '',
+      });
+    },
+    [markers.length]
+  );
 
   const onMapClick = useCallback(
     (event: google.maps.MapMouseEvent) => {
@@ -79,7 +81,7 @@ export const HomePage = () => {
     setSelected(marker);
   };
 
-  const updateMarkerInFirebase = (marker: MarkerData) => {
+  const updateMarkerInFirebase = useCallback((marker: MarkerData) => {
     const markerRef = ref(db, `quests/Quest ${marker.id}`);
     set(markerRef, {
       location: {
@@ -88,7 +90,7 @@ export const HomePage = () => {
       },
       timestamp: new Date().toISOString(),
     });
-  };
+  }, []);
 
   const deleteMarker = (id: number) => {
     setMarkers((current) => current.filter((marker) => marker.id !== id));
