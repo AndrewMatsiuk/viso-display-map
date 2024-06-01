@@ -1,19 +1,19 @@
-import React, { useState, useCallback, useEffect } from 'react';
 import {
   GoogleMap,
-  useLoadScript,
-  MarkerF,
   InfoWindowF,
   Libraries,
-  MarkerClustererF,
+  MarkerF,
+  useLoadScript,
 } from '@react-google-maps/api';
-import { db } from '../../firebaseConfig';
-import { ref, set, remove, onValue } from 'firebase/database';
-import { MarkerData } from '../../types/marker';
 import { Button, Flex } from 'antd';
+import { onValue, ref, remove, set } from 'firebase/database';
+import { useCallback, useEffect, useState } from 'react';
+import { db } from '../../firebaseConfig';
+import { MarkerData } from '../../types/marker';
 
 const libraries: Libraries = ['places'];
 const mapContainerStyle = {
+  marginTop: 20,
   width: '80vw',
   height: '80vh',
 };
@@ -112,12 +112,8 @@ export const HomePage = () => {
 
   return (
     <div style={{ backgroundColor: '#221f1f', height: '100vh' }}>
-      <div
-        style={{
-          display: 'table-row',
-        }}
-      >
-        <Button onClick={clearMarkers} type='primary'>
+      <div style={{ marginLeft: '10%' }}>
+        <Button onClick={clearMarkers} type='primary' style={{ marginTop: 20 }}>
           Clear Markers
         </Button>
         <GoogleMap
