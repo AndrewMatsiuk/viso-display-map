@@ -2,7 +2,7 @@ import React from 'react';
 import { GoogleMap, InfoWindowF } from '@react-google-maps/api';
 import { Button, Flex } from 'antd';
 import { MarkerData } from '../../types/marker';
-import MarkerComponent from '../Marker';
+import { MarkerComponent } from '../Marker';
 
 interface MapProps {
   markers: MarkerData[];
@@ -20,7 +20,7 @@ interface MapProps {
   mapContainerStyle: React.CSSProperties;
 }
 
-const Map: React.FC<MapProps> = ({
+export const Map: React.FC<MapProps> = ({
   markers,
   selected,
   setSelected,
@@ -89,5 +89,3 @@ const Map: React.FC<MapProps> = ({
     </div>
   );
 };
-
-export default Map;

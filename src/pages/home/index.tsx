@@ -3,7 +3,7 @@ import { useLoadScript, Libraries } from '@react-google-maps/api';
 import { onValue, ref, remove, set } from 'firebase/database';
 import { db } from '../../firebaseConfig';
 import { MarkerData } from '../../types/marker';
-import Map from '../../components/Map'; // Adjust the path as necessary
+import { Map } from '../../components/Map';
 
 const mapContainerStyle = {
   marginTop: 20,
@@ -15,9 +15,9 @@ const center = {
   lng: 24.0187099,
 };
 
-const staticLibraries = ['places'] as Libraries; // Avoid recreation of libraries array
+const staticLibraries = ['places'] as Libraries;
 
-const HomePage = () => {
+export const HomePage = () => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: 'AIzaSyBbPgt5B3BfouJCrwT_80fVlPr0jnoKz2Y',
     libraries: staticLibraries,
@@ -136,5 +136,3 @@ const HomePage = () => {
     />
   );
 };
-
-export default HomePage;

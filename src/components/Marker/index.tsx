@@ -8,7 +8,7 @@ interface MarkerComponentProps {
   onClick: (marker: MarkerData) => void;
 }
 
-const MarkerComponent: React.FC<MarkerComponentProps> = ({
+export const MarkerComponent: React.FC<MarkerComponentProps> = ({
   marker,
   onDragEnd,
   onClick,
@@ -24,5 +24,3 @@ const MarkerComponent: React.FC<MarkerComponentProps> = ({
     />
   );
 };
-
-export default MarkerComponent;
