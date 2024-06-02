@@ -17,7 +17,7 @@ const center = {
 
 const staticLibraries = ['places'] as Libraries; // Avoid recreation of libraries array
 
-export const HomePage = () => {
+const HomePage = () => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: 'AIzaSyBbPgt5B3BfouJCrwT_80fVlPr0jnoKz2Y',
     libraries: staticLibraries,
@@ -136,3 +136,5 @@ export const HomePage = () => {
     />
   );
 };
+
+export default HomePage;
