@@ -1,16 +1,10 @@
-import {
-  GoogleMap,
-  InfoWindowF,
-  Libraries,
-  MarkerF,
-  useLoadScript,
-} from '@react-google-maps/api';
-import { Button, Flex } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useLoadScript, Libraries } from '@react-google-maps/api';
 import { onValue, ref, remove, set } from 'firebase/database';
-import { useCallback, useEffect, useState } from 'react';
 import { db } from '../../firebaseConfig';
 import { MarkerData } from '../../types/marker';
-const libraries: Libraries = ['places'];
+import Map from '../../components/Map'; // Adjust the path as necessary
+
 const mapContainerStyle = {
   marginTop: 20,
   width: '80vw',
@@ -21,7 +15,8 @@ const center = {
   lng: 24.0187099,
 };
 
-const staticLibraries = ['places'] as Libraries;
+const staticLibraries = ['places'] as Libraries; // Avoid recreation of libraries array
+
 export const HomePage = () => {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: 'AIzaSyBbPgt5B3BfouJCrwT_80fVlPr0jnoKz2Y',
@@ -92,6 +87,21 @@ export const HomePage = () => {
     });
   }, []);
 
+  const onMarkerDragEnd = (
+    event: google.maps.MapMouseEvent,
+    marker: MarkerData
+  ) => {
+    const updatedMarker = {
+      ...marker,
+      lat: event.latLng!.lat(),
+      lng: event.latLng!.lng(),
+    };
+    setMarkers((current) =>
+      current.map((m) => (m.id === marker.id ? updatedMarker : m))
+    );
+    updateMarkerInFirebase(updatedMarker);
+  };
+
   const deleteMarker = (id: number) => {
     setMarkers((current) => current.filter((marker) => marker.id !== id));
     const markerRef = ref(db, `quests/Quest ${id}`);
@@ -112,71 +122,17 @@ export const HomePage = () => {
   if (!isLoaded) return <div>Loading Maps</div>;
 
   return (
-    <div style={{ backgroundColor: '#221f1f', height: '100vh' }}>
-      <div style={{ marginLeft: '10%' }}>
-        <Button onClick={clearMarkers} type='primary' style={{ marginTop: 20 }}>
-          Clear Markers
-        </Button>
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          zoom={12}
-          center={center}
-          onClick={onMapClick}
-        >
-          {markers.map((marker) => (
-            <MarkerF
-              key={marker.id}
-              position={{ lat: marker.lat, lng: marker.lng }}
-              label={marker.label}
-              draggable
-              onDragEnd={(event) => {
-                const updatedMarker = {
-                  ...marker,
-                  lat: event.latLng!.lat(),
-                  lng: event.latLng!.lng(),
-                };
-                setMarkers((current) =>
-                  current.map((m) => (m.id === marker.id ? updatedMarker : m))
-                );
-                updateMarkerInFirebase(updatedMarker);
-              }}
-              onClick={() => onMarkerClick(marker)}
-            />
-          ))}
-
-          {selected && (
-            <InfoWindowF
-              position={{ lat: selected.lat, lng: selected.lng }}
-              onCloseClick={() => {
-                setSelected(null);
-              }}
-            >
-              <Flex vertical gap='small'>
-                <div
-                  style={{
-                    fontWeight: 'bold',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                  }}
-                >
-                  Quest {selected.id}
-                </div>
-                <div>
-                  <div>lat: {selected.lat}</div>
-                  <div>lng: {selected.lng}</div>
-                </div>
-                <div>Next {+selected.label + 1}</div>
-                <Button
-                  type='primary'
-                  onClick={() => deleteMarker(selected.id)}
-                >
-                  Delete
-                </Button>
-              </Flex>
-            </InfoWindowF>
-          )}
-        </GoogleMap>
-      </div>
-    </div>
+    <Map
+      markers={markers}
+      selected={selected}
+      setSelected={setSelected}
+      onMapClick={onMapClick}
+      onMarkerClick={onMarkerClick}
+      onMarkerDragEnd={onMarkerDragEnd}
+      deleteMarker={deleteMarker}
+      clearMarkers={clearMarkers}
+      center={center}
+      mapContainerStyle={mapContainerStyle}
+    />
   );
 };
