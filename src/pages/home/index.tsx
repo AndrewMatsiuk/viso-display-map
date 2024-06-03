@@ -19,7 +19,7 @@ const staticLibraries = ['places'] as Libraries;
 
 export const HomePage = () => {
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyBbPgt5B3BfouJCrwT_80fVlPr0jnoKz2Y',
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY!,
     libraries: staticLibraries,
   });
 
