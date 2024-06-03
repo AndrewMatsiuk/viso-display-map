@@ -2,7 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getDatabase } from 'firebase/database';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBbPgt5B3BfouJCrwT_80fVlPr0jnoKz2Y',
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: 'viso-display-map.firebaseapp.com',
   projectId: 'viso-display-map',
   storageBucket: 'viso-display-map.appspot.com',
