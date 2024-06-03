@@ -74,9 +74,9 @@ export const HomePage = () => {
     [markers, saveMarkerToFirebase]
   );
 
-  const onMarkerClick = (marker: MarkerData) => {
+  const onMarkerClick = useCallback((marker: MarkerData) => {
     setSelected(marker);
-  };
+  }, []);
 
   const updateMarkerInFirebase = useCallback((marker: MarkerData) => {
     const markerRef = ref(db, `quests/Quest ${marker.id}`);
@@ -89,36 +89,39 @@ export const HomePage = () => {
     });
   }, []);
 
-  const onMarkerDragEnd = (
-    event: google.maps.MapMouseEvent,
-    marker: MarkerData
-  ) => {
-    const updatedMarker = {
-      ...marker,
-      lat: event.latLng!.lat(),
-      lng: event.latLng!.lng(),
-    };
-    setMarkers((current) =>
-      current.map((m) => (m.id === marker.id ? updatedMarker : m))
-    );
-    updateMarkerInFirebase(updatedMarker);
-  };
+  const onMarkerDragEnd = useCallback(
+    (event: google.maps.MapMouseEvent, marker: MarkerData) => {
+      const updatedMarker = {
+        ...marker,
+        lat: event.latLng!.lat(),
+        lng: event.latLng!.lng(),
+      };
+      setMarkers((current) =>
+        current.map((m) => (m.id === marker.id ? updatedMarker : m))
+      );
+      updateMarkerInFirebase(updatedMarker);
+    },
+    [updateMarkerInFirebase]
+  );
 
-  const deleteMarker = (id: number) => {
-    setMarkers((current) => current.filter((marker) => marker.id !== id));
-    const markerRef = ref(db, `quests/Quest ${id}`);
-    remove(markerRef);
-    if (selected?.id === id) {
-      setSelected(null);
-    }
-  };
+  const deleteMarker = useCallback(
+    (id: number) => {
+      setMarkers((current) => current.filter((marker) => marker.id !== id));
+      const markerRef = ref(db, `quests/Quest ${id}`);
+      remove(markerRef);
+      if (selected?.id === id) {
+        setSelected(null);
+      }
+    },
+    [selected]
+  );
 
-  const clearMarkers = () => {
+  const clearMarkers = useCallback(() => {
     setMarkers([]);
     const questsRef = ref(db, 'quests');
     remove(questsRef);
     setSelected(null);
-  };
+  }, []);
 
   if (loadError) return <div>Error loading maps</div>;
   if (!isLoaded) return <div>Loading Maps</div>;
