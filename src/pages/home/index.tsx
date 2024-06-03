@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLoadScript, Libraries } from '@react-google-maps/api';
 import { onValue, ref, remove, set } from 'firebase/database';
-import { db } from '../../firebaseConfig';
+import { db } from '../../firebase/firebaseConfig';
 import { MarkerData } from '../../types/marker';
 import { Map } from '../../components/Map';
 
