@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLoadScript, Libraries } from '@react-google-maps/api';
-import { onValue, ref, remove, set } from 'firebase/database';
+import { DataSnapshot, onValue, ref, remove, set } from 'firebase/database';
 import { db } from '../../firebase/firebaseConfig';
 import { MarkerData } from '../../types/marker';
 import { Map } from '../../components/Map';
@@ -28,9 +28,8 @@ export const HomePage = () => {
 
   useEffect(() => {
     const markersRef = ref(db, 'quests');
-    onValue(markersRef, (snapshot) => {
+    const handleData = (snapshot: DataSnapshot) => {
       const data = snapshot.val();
-
       if (data) {
         const loadedMarkers = Object.keys(data).map((key) => ({
           id: parseInt(key.split(' ')[1], 10),
@@ -40,7 +39,10 @@ export const HomePage = () => {
         }));
         setMarkers(loadedMarkers);
       }
-    });
+    };
+    const unsubscribe = onValue(markersRef, handleData);
+
+    return () => unsubscribe();
   }, []);
 
   const saveMarkerToFirebase = useCallback(
